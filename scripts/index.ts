@@ -63,6 +63,23 @@ async function repoRuleSet({ github, owner, repo }: RulesetParams)  {
                     exclude: [],
                 },
             },
+            rules: [
+                {
+                    type: "deletion"
+                },
+                {
+                    type: "non_fast_forward"
+                },
+                {
+                    type: "update"
+                },
+                {
+                    type: "creation"
+                },
+                {
+                    type: "required_linear_history"
+                }
+            ]
         });
 
         console.log('✅ Ruleset impostata e attivata correttamente.');
