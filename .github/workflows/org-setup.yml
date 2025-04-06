@@ -23,6 +23,7 @@ jobs:
       - name: View context attributes
         uses: actions/github-script@v7
         with:
+          github-token: ${{ secrets.ORG_SETTINGS_PAT }}
           script: |
             const script = require('./lib/index.js').default
             await script({github, context})
