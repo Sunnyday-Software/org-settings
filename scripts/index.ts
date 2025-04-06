@@ -73,7 +73,7 @@ export default async ({github, context}: ActionParams) => {
             owner: 'Sunnyday-Software', repo: 'docker-project-images', permission: 'write'
         })
         await repoTeam({
-            github:github, org: 'Sunnyday-Software', team_slug: 'mantainers',
+            github:github, org: 'Sunnyday-Software', team_slug: 'maintainers',
             owner: 'Sunnyday-Software', repo: 'docker-project-images', permission: 'maintain'
         })
     } catch (error) {
