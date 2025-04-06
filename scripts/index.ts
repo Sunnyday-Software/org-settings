@@ -42,28 +42,46 @@ async function repoTeam({github, org, team_slug, owner, repo, permission}: AddRe
 };
 
 
-interface BranchProtectionParams {
+
+interface RulesetParams {
     github: InstanceType<typeof GitHub>;
     owner: string;
     repo: string;
-    branch: string;
 }
 
- async function branchProtection({ github, owner, repo, branch }: BranchProtectionParams) {
+async function repoRuleSet({ github, owner, repo }: RulesetParams)  {
     try {
-        await github.rest.repos.updateBranchProtection({
+        await github.rest.repos.createRepoRuleset({
             owner,
             repo,
-            branch,
-            required_status_checks: null, // nessun controllo di status specifico obbligatorio
-            enforce_admins: true, // imposta la regola anche per amministratori (consigliato)
-            required_pull_request_reviews: {
-                required_approving_review_count: 1, // almeno 1 approvazione obbligatoria
+            name: 'Block direct push to main',
+            enforcement: 'active', // attiva immediatamente la regola
+            target: 'branch',
+            conditions: {
+                ref_name: {
+                    include: ['main'],
+                    exclude: [],
+                },
             },
-            restrictions: null, // nessuna restrizione specifica su utenti/team (puoi aggiungerli se necessario)
+            rules: [
+                {
+                    type: 'pull_request', // obbliga sempre passaggio via PR
+                    parameters: {
+                        required_approving_review_count: 1, // almeno 1 approvazione
+                    },
+                },
+                {
+                    type: 'restrict_pushes', // limita i push diretti
+                    parameters: {
+                        teams: [], // Puoi aggiungere ID team consentiti
+                        users: [], // utenti consentiti (optional)
+                        apps: [],  // app consentite (optional)
+                    },
+                },
+            ],
         });
 
-        console.log(`✅ Protezione attivata con successo su '${branch}'.`);
+        console.log('✅ Ruleset impostata e attivata correttamente.');
     } catch (error) {
         console.error('⚠️ Errore:', error);
     }
@@ -109,8 +127,8 @@ export default async ({github, context}: ActionParams) => {
             owner: 'Sunnyday-Software', repo: 'docker-project-images', permission: 'maintain'
         })
 
-        await branchProtection({
-            github:github, owner: 'Sunnyday-Software', repo: 'docker-project-images', branch: 'main'})
+        await repoRuleSet({
+            github:github, owner: 'Sunnyday-Software', repo: 'docker-project-images'})
     } catch (error) {
         console.error('⚠️ Errore durante la ricezione dei repository:', error);
     }
