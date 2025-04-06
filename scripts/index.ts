@@ -19,7 +19,7 @@ interface AddRepoToTeamParams {
     team_slug: string;                   // Slug del nome del team
     owner: string;                       // Nome dell'organizzazione
     repo: string;                        // Nome del repository
-    permission: 'pull' | 'triage' | 'push' | 'maintain' | 'admin';
+    permission: 'pull' | 'triage' | 'push' | 'maintain' | 'admin' | 'write';
 }
 
 async function repoTeam({github, org, team_slug, owner, repo, permission}: AddRepoToTeamParams) {
