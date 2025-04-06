@@ -65,18 +65,10 @@ async function repoRuleSet({ github, owner, repo }: RulesetParams)  {
             },
             rules: [
                 {
-                    type: 'pull_request', // obbliga sempre passaggio via PR
-                    parameters: {
-                        required_approving_review_count: 1, // almeno 1 approvazione
-                    },
+                    type: 'pull_request'
                 },
                 {
-                    type: 'restrict_pushes', // limita i push diretti
-                    parameters: {
-                        teams: [], // Puoi aggiungere ID team consentiti
-                        users: [], // utenti consentiti (optional)
-                        apps: [],  // app consentite (optional)
-                    },
+                    type: 'update', // limita i push diretti
                 },
             ],
         });
