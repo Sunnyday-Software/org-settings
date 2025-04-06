@@ -59,18 +59,10 @@ async function repoRuleSet({ github, owner, repo }: RulesetParams)  {
             target: 'branch',
             conditions: {
                 ref_name: {
-                    include: ['main'],
+                    include: ['refs/heads/main'],
                     exclude: [],
                 },
             },
-            rules: [
-                {
-                    type: 'pull_request'
-                },
-                {
-                    type: 'update', // limita i push diretti
-                },
-            ],
         });
 
         console.log('✅ Ruleset impostata e attivata correttamente.');
