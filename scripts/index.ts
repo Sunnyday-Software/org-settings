@@ -15,7 +15,12 @@ interface ActionParams {
 
 export default async ({github, context}: ActionParams
 ) =>  {
-    const { data: repositories }= await github.rest.repos.listForUser()
-    repositories.forEach(repo => console.log(`- ${repo.name}`));
+    const { data: repositories }= await github.rest.repos.listForAuthenticatedUser({
+        per_page: 10,
+    });
+
+    console.log(`Repository accessibili tramite il token attuale:`);
+    repositories.forEach(repo => console.log(`- ${repo.full_name}`));
+
 
 }
