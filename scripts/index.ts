@@ -3,7 +3,10 @@ import * as github from '@actions/github';
 
 import {Context} from '@actions/github/lib/context';
 import {GitHub} from '@actions/github/lib/utils';
-
+const managedRepos = [
+    "docker-project-images",
+    "docker-project-manager"
+]
 /**
  * Check https://github.com/marketplace/actions/github-script
  */
@@ -37,6 +40,35 @@ async function repoTeam({github, org, team_slug, owner, repo, permission}: AddRe
         console.error('⚠️ Errore:', error);
     }
 };
+
+
+interface BranchProtectionParams {
+    github: InstanceType<typeof GitHub>;
+    owner: string;
+    repo: string;
+    branch: string;
+}
+
+ async function branchProtection({ github, owner, repo, branch }: BranchProtectionParams) {
+    try {
+        await github.rest.repos.updateBranchProtection({
+            owner,
+            repo,
+            branch,
+            required_status_checks: null, // nessun controllo di status specifico obbligatorio
+            enforce_admins: true, // imposta la regola anche per amministratori (consigliato)
+            required_pull_request_reviews: {
+                required_approving_review_count: 1, // almeno 1 approvazione obbligatoria
+            },
+            restrictions: null, // nessuna restrizione specifica su utenti/team (puoi aggiungerli se necessario)
+        });
+
+        console.log(`✅ Protezione attivata con successo su '${branch}'.`);
+    } catch (error) {
+        console.error('⚠️ Errore:', error);
+    }
+};
+
 
 export default async ({github, context}: ActionParams) => {
     let repositories: Array<any> = [];
@@ -76,6 +108,9 @@ export default async ({github, context}: ActionParams) => {
             github:github, org: 'Sunnyday-Software', team_slug: 'maintainers',
             owner: 'Sunnyday-Software', repo: 'docker-project-images', permission: 'maintain'
         })
+
+        await branchProtection({
+            github:github, owner: 'Sunnyday-Software', repo: 'docker-project-images', branch: 'main'})
     } catch (error) {
         console.error('⚠️ Errore durante la ricezione dei repository:', error);
     }
