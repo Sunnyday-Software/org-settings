@@ -19,7 +19,7 @@ interface AddRepoToTeamParams {
     team_slug: string;                   // Slug del nome del team
     owner: string;                       // Nome dell'organizzazione
     repo: string;                        // Nome del repository
-    permission: 'pull' | 'triage' | 'push' | 'maintain' | 'admin' | 'write';
+    permission: 'pull' | 'triage' | 'push' | 'maintain' | 'admin' ;
 }
 
 async function repoTeam({github, org, team_slug, owner, repo, permission}: AddRepoToTeamParams) {
@@ -70,7 +70,7 @@ export default async ({github, context}: ActionParams) => {
 
         await repoTeam({
             github:github, org: 'Sunnyday-Software', team_slug: 'developers',
-            owner: 'Sunnyday-Software', repo: 'docker-project-images', permission: 'write'
+            owner: 'Sunnyday-Software', repo: 'docker-project-images', permission: 'push'
         })
         await repoTeam({
             github:github, org: 'Sunnyday-Software', team_slug: 'maintainers',
