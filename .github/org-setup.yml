@@ -1,4 +1,15 @@
-- name: View context attributes
-  uses: actions/github-script@v7
-  with:
-    script: console.log(context)
+name: Setup organization
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  setup-organization:
+    runs-on: ubuntu-latest
+    steps:
+      - name: View context attributes
+        uses: actions/github-script@v7
+        with:
+          script: console.log(context)
