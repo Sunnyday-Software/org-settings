@@ -80,7 +80,7 @@ async function repoRuleSet(currentRulesetsMapByName: Record<string, any>,{ githu
             console.log('+ Updating ruleset...');
             const updatePayload = {
                 ...payload,
-                ruleset_id: currentRulesetsMapByName[repo].id
+                ruleset_id: currentRulesetsMapByName[payload.name].id
             };
             await github.rest.repos.updateRepoRuleset(updatePayload);
         }else {
