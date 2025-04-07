@@ -135,7 +135,10 @@ export default async ({github, context}: ActionParams) => {
 
     for (const org of orgList) {
         const {data: teams} = await github.rest.teams.list({org:org, per_page:100})
-        console.log(`Teams in ${org}: ${teams}`)
+        console.log(`Teams in ${org}:`)
+        for (const team of teams) {
+            console.log(`Team: ${team.name}, id: ${team.id}`)
+        }
     }
 
 
