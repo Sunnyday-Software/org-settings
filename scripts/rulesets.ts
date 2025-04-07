@@ -2,9 +2,9 @@ import type {RestEndpointMethodTypes} from '@octokit/plugin-rest-endpoint-method
 
 type CreateRepoRulesetParams = RestEndpointMethodTypes['repos']['createRepoRuleset']['parameters'];
 
-export type PartialCreateRepoRulesetParams = Omit<CreateRepoRulesetParams, "owner" | "repo">;
+export type SettingsCreateRepoRulesetParams = Omit<CreateRepoRulesetParams, "owner" | "repo">;
 
-const blockDirectPushToMain: PartialCreateRepoRulesetParams = {
+export const settingsRepoRule_blockDirectPushToMain: SettingsCreateRepoRulesetParams = {
     name: 'Block direct push to main',
     enforcement: 'active',
     target: 'branch',
@@ -23,4 +23,4 @@ const blockDirectPushToMain: PartialCreateRepoRulesetParams = {
     ]
 }
 
-export const repoRuleSet : Array<PartialCreateRepoRulesetParams> = [blockDirectPushToMain]
+export const settingsDefaultRepoRules : Array<SettingsCreateRepoRulesetParams> = [settingsRepoRule_blockDirectPushToMain]

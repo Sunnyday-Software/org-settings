@@ -49,6 +49,8 @@ interface RulesetParams {
 }
 
 import type {RestEndpointMethodTypes} from '@octokit/plugin-rest-endpoint-methods';
+import {settingRepositories} from "./repositories";
+import {settingTeams} from "./teams";
 
 type CreateRepoRulesetParams = RestEndpointMethodTypes['repos']['createRepoRuleset']['parameters'];
 
@@ -135,29 +137,29 @@ export default async ({github, context}: ActionParams) => {
 
     console.log(`✅ Totale repository trovati: ${repositories.length}`);
 
-    await repoTeam({
-        github: github, org: 'Sunnyday-Software', team_slug: 'developers',
-        owner: 'Sunnyday-Software', repo: 'docker-project-images', permission: 'push'
-    })
-    await repoTeam({
-        github: github, org: 'Sunnyday-Software', team_slug: 'maintainers',
-        owner: 'Sunnyday-Software', repo: 'docker-project-images', permission: 'maintain'
-    })
+    for (const s_repo of settingRepositories) {
+        console.log(`Setting repo: ${s_repo.repo}--------------------------------------`)
+        for(const s_team of settingTeams) {
+            await repoTeam({
+                github: github, org: s_repo.org, team_slug: s_team.name,
+                owner: s_repo.owner, repo: s_repo.repo, permission: s_team.permission
+            })
+        }
+        const currentRulesetList = await getRepoRuleSet({
+            github: github, owner: s_repo.owner, repo: s_repo.repo
+        })
 
-    const currentRulesetList = await getRepoRuleSet({
-        github: github, owner: 'Sunnyday-Software', repo: 'docker-project-images'
-    })
+        const currentRulesets = currentRulesetList?.reduce((acc, repo) => {
+            acc[repo.name] = repo;
+            return acc;
+        }, {} as Record<string, typeof currentRulesetList[0]>);
 
-    const currentRulesets = currentRulesetList?.reduce((acc, repo) => {
-        acc[repo.name] = repo;
-        return acc;
-    }, {} as Record<string, typeof currentRulesetList[0]>);
+        await repoRuleSet(currentRulesets || {}, {
+            github: github, owner: s_repo.owner, repo: s_repo.repo
+        })
+    }
 
-    console.log(currentRulesets)
 
-    await repoRuleSet(currentRulesets || {}, {
-        github: github, owner: 'Sunnyday-Software', repo: 'docker-project-images'
-    })
 
 };
 
