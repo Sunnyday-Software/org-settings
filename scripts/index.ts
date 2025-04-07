@@ -90,7 +90,7 @@ async function repoRuleSet({ github, owner, repo }: RulesetParams)  {
 
 async function getRepoRuleSet({ github, owner, repo }: RulesetParams)  {
     try {
-        await github.rest.repos.getRepoRulesets({
+        const {data: repoRulesets} = await github.rest.repos.getRepoRulesets({
             owner,
             repo,
             per_page: 100,
@@ -100,6 +100,7 @@ async function getRepoRuleSet({ github, owner, repo }: RulesetParams)  {
             },
         });
 
+        return repoRulesets;
     } catch (error) {
         console.error('⚠️ Errore:', error);
     }
