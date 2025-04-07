@@ -10,5 +10,10 @@ export const settingRepositories: Array<SettingsRepository> = [
         org: ORG,
         owner: ORG,
         repo: 'docker-project-images'
+    },
+    {
+        org: ORG,
+        owner: ORG,
+        repo: 'docker-project-manager'
     }
 ];
