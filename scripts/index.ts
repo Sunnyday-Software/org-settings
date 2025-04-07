@@ -59,9 +59,9 @@ type CreateRepoRulesetParams =
 function enrichRuleset(org: string, p: CreateRepoRulesetParams) {
   if (runtime.orgsMap.has(org)) {
     const rtOrgInfo = runtime.orgsMap.get(org)!;
-    if (p.conditions?.ref_name?.include?.[0] === "refs/heads/testing") {
-      if (rtOrgInfo.teams.has("testing")) {
-        const testingTeam = rtOrgInfo.teams.get("testing")!;
+    if (p.conditions?.ref_name?.include?.includes("refs/heads/testing")) {
+      if (rtOrgInfo.teams.has("maintainers")) {
+        const testingTeam = rtOrgInfo.teams.get("maintainers")!;
         p.bypass_actors = [
           {
             actor_id: testingTeam.id,
