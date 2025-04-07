@@ -50,14 +50,19 @@ interface RulesetParams {
     currentRulesetsMapByName: Record<string, any>;
 }
 
+import type { RestEndpointMethodTypes } from '@octokit/plugin-rest-endpoint-methods';
+
+type CreateRepoRulesetParams = RestEndpointMethodTypes['repos']['createRepoRuleset']['parameters'];
+
+
 async function repoRuleSet({ github, owner, repo, currentRulesetsMapByName }: RulesetParams)  {
     try {
-        const payload = {
+        const payload : CreateRepoRulesetParams= {
             owner,
             repo,
             name: 'Block direct push to main',
             enforcement: 'active', // attiva immediatamente la regola
-            target: 'branch',
+            target: 'branch' ,
             conditions: {
                 ref_name: {
                     include: ['refs/heads/main'],
@@ -65,21 +70,11 @@ async function repoRuleSet({ github, owner, repo, currentRulesetsMapByName }: Ru
                 },
             },
             rules: [
-                {
-                    type: "deletion"
-                },
-                {
-                    type: "non_fast_forward"
-                },
-                {
-                    type: "update"
-                },
-                {
-                    type: "creation"
-                },
-                {
-                    type: "required_linear_history"
-                }
+                {type: "deletion"},
+                {type: "non_fast_forward"},
+                {type: "update"},
+                {type: "creation"},
+                {type: "required_linear_history"}
             ]
         }
         if (currentRulesetsMapByName[repo]) {
