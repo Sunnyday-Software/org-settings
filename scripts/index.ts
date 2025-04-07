@@ -56,6 +56,24 @@ interface RulesetParams {
 type CreateRepoRulesetParams =
   RestEndpointMethodTypes["repos"]["createRepoRuleset"]["parameters"];
 
+function enrichRuleset(org: string, p: CreateRepoRulesetParams) {
+  if (runtime.orgsMap.has(org)) {
+    const rtOrgInfo = runtime.orgsMap.get(org)!;
+    if (p.conditions?.ref_name?.include?.[0] === "refs/heads/testing") {
+      if (rtOrgInfo.teams.has("testing")) {
+        const testingTeam = rtOrgInfo.teams.get("testing")!;
+        p.bypass_actors = [
+          {
+            actor_id: testingTeam.id,
+            actor_type: "Team",
+            bypass_mode: "always",
+          },
+        ];
+      }
+    }
+  }
+}
+
 async function repoRuleSet(
   currentRulesetsMapByName: Record<string, any>,
   settingsCreateRepoRulesetParams: SettingsCreateRepoRulesetParams,
@@ -73,9 +91,11 @@ async function repoRuleSet(
       ...payload,
       ruleset_id: currentRulesetsMapByName[payload.name].id,
     };
+    enrichRuleset(owner, updatePayload);
     await github.rest.repos.updateRepoRuleset(updatePayload);
   } else {
     console.log("+ Creating ruleset...");
+    enrichRuleset(owner, payload);
     await github.rest.repos.createRepoRuleset(payload);
   }
   console.log("✅ Ruleset impostata e attivata correttamente.");
@@ -170,6 +190,8 @@ export default async ({ github, context }: ActionParams) => {
         );
     });
   }
+
+  //configurazione dei repo
 
   for (const s_repo of settingRepositories) {
     console.log(
