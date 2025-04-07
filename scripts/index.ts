@@ -159,7 +159,7 @@ export default async ({github, context}: ActionParams) => {
             return acc;
         }, {} as Record<string, typeof currentRulesetList[0]>);
 
-        console.log(currentRulesetList)
+        console.log(currentRulesets)
 
         await repoRuleSet(currentRulesets||{},{
             github:github, owner: 'Sunnyday-Software', repo: 'docker-project-images'})
