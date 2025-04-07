@@ -130,7 +130,7 @@ export default async ({github, context}: ActionParams) => {
     }
 
     repositories.forEach(repo => {
-        console.log(`Repo: ${repo.full_name}, owner: ${repo.owner.name}`);
+        console.log(`Repo: ${repo.full_name}, owner: ${repo.owner}`);
     });
 
     console.log(`✅ Totale repository trovati: ${repositories.length}`);
