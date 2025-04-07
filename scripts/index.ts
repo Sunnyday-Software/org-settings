@@ -76,7 +76,7 @@ async function repoRuleSet(currentRulesetsMapByName: Record<string, any>,{ githu
                 {type: "required_linear_history"}
             ]
         }
-        if (currentRulesetsMapByName[repo]) {
+        if (currentRulesetsMapByName[payload.name]) {
             console.log('+ Updating ruleset...');
             const updatePayload = {
                 ...payload,
