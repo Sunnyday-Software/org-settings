@@ -47,7 +47,6 @@ interface RulesetParams {
     github: InstanceType<typeof GitHub>;
     owner: string;
     repo: string;
-    currentRulesetsMapByName: Record<string, any>;
 }
 
 import type { RestEndpointMethodTypes } from '@octokit/plugin-rest-endpoint-methods';
@@ -55,7 +54,7 @@ import type { RestEndpointMethodTypes } from '@octokit/plugin-rest-endpoint-meth
 type CreateRepoRulesetParams = RestEndpointMethodTypes['repos']['createRepoRuleset']['parameters'];
 
 
-async function repoRuleSet({ github, owner, repo, currentRulesetsMapByName }: RulesetParams)  {
+async function repoRuleSet(currentRulesetsMapByName: Record<string, any>,{ github, owner, repo }: RulesetParams)  {
     try {
         const payload : CreateRepoRulesetParams= {
             owner,
@@ -160,7 +159,7 @@ export default async ({github, context}: ActionParams) => {
 
         console.log(currentRulesetList)
 
-        await repoRuleSet({currentRulesetsMapByName:currentRulesets,
+        await repoRuleSet(currentRulesets||{},{
             github:github, owner: 'Sunnyday-Software', repo: 'docker-project-images'})
     } catch (error) {
         console.error('⚠️ Errore durante la ricezione dei repository:', error);
