@@ -18,6 +18,13 @@
   "homepage": "https://github.com/Sunnyday-Software/org-settings#readme",
   "description": "",
   "devDependencies": {
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^10.1.1",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-n": "^16.6.2",
+    "eslint-plugin-promise": "^6.6.0",
+    "prettier": "3.5.3",
     "typescript": "^5.8.3"
   },
   "dependencies": {
