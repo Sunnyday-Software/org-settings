@@ -58,10 +58,10 @@ type CreateRepoRulesetParams = RestEndpointMethodTypes['repos']['createRepoRules
 
 async function repoRuleSet(currentRulesetsMapByName: Record<string, any>,
                            settingsCreateRepoRulesetParams: SettingsCreateRepoRulesetParams, {
-    github,
-    owner,
-    repo
-}: RulesetParams) {
+                               github,
+                               owner,
+                               repo
+                           }: RulesetParams) {
 
     const payload: CreateRepoRulesetParams = {
         owner,
@@ -130,6 +130,15 @@ export default async ({github, context}: ActionParams) => {
 
     console.log(`✅ Totale repository trovati: ${repositories.length}`);
 
+    // Ottiene tutti i valori unici della proprietà org
+    const orgList = [...new Set(settingRepositories.filter(repo => repo.org != null && repo.org.trim().length > 0).map(repo => repo.org))];
+
+    for (const org of orgList) {
+        const {data: teams} = await github.rest.teams.list({org:org, per_page:100})
+        console.log(`Teams in ${org}: ${teams}`)
+    }
+
+
     for (const s_repo of settingRepositories) {
         console.log(`Setting repo: ${s_repo.repo}--------------------------------------`)
         for (const s_team of settingTeams) {
@@ -147,8 +156,8 @@ export default async ({github, context}: ActionParams) => {
             return acc;
         }, {} as Record<string, typeof currentRulesetList[0]>);
 
-        for( const s_repoRule of s_repo.repoRules) {
-            await repoRuleSet(currentRulesets || {}, s_repoRule,{
+        for (const s_repoRule of s_repo.repoRules) {
+            await repoRuleSet(currentRulesets || {}, s_repoRule, {
                 github: github, owner: s_repo.owner, repo: s_repo.repo
             })
         }
