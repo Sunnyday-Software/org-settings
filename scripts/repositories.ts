@@ -1,7 +1,10 @@
+import {SettingsCreateRepoRulesetParams, settingsDefaultRepoRules} from "./rulesets";
+
 export type SettingsRepository = {
     org: string;
     owner: string
-    repo: string
+    repo: string,
+    repoRules : Array<SettingsCreateRepoRulesetParams>
 };
 const ORG = 'Sunnyday-Software'
 
@@ -9,7 +12,8 @@ function SDSOrg(repo: string): SettingsRepository {
     return {
         org: ORG,
         owner: ORG,
-        repo: repo
+        repo: repo,
+        repoRules: settingsDefaultRepoRules
     }
 }
 

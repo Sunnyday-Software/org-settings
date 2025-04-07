@@ -51,32 +51,25 @@ interface RulesetParams {
 import type {RestEndpointMethodTypes} from '@octokit/plugin-rest-endpoint-methods';
 import {settingRepositories} from "./repositories";
 import {settingTeams} from "./teams";
+import {SettingsCreateRepoRulesetParams} from "./rulesets";
 
 type CreateRepoRulesetParams = RestEndpointMethodTypes['repos']['createRepoRuleset']['parameters'];
 
 
-async function repoRuleSet(currentRulesetsMapByName: Record<string, any>, {github, owner, repo}: RulesetParams) {
+async function repoRuleSet(currentRulesetsMapByName: Record<string, any>,
+                           settingsCreateRepoRulesetParams: SettingsCreateRepoRulesetParams, {
+    github,
+    owner,
+    repo
+}: RulesetParams) {
 
     const payload: CreateRepoRulesetParams = {
         owner,
         repo,
-        name: 'Block direct push to main',
-        enforcement: 'active', // attiva immediatamente la regola
-        target: 'branch',
-        conditions: {
-            ref_name: {
-                include: ['refs/heads/main'],
-                exclude: [],
-            },
-        },
-        rules: [
-            {type: "deletion"},
-            {type: "non_fast_forward"},
-            {type: "update"},
-            {type: "creation"},
-            {type: "required_linear_history"}
-        ]
-    }
+        ...settingsCreateRepoRulesetParams
+    } as CreateRepoRulesetParams
+
+
     if (currentRulesetsMapByName[payload.name]) {
         console.log('+ Updating ruleset...');
         const updatePayload = {
@@ -139,7 +132,7 @@ export default async ({github, context}: ActionParams) => {
 
     for (const s_repo of settingRepositories) {
         console.log(`Setting repo: ${s_repo.repo}--------------------------------------`)
-        for(const s_team of settingTeams) {
+        for (const s_team of settingTeams) {
             await repoTeam({
                 github: github, org: s_repo.org, team_slug: s_team.name,
                 owner: s_repo.owner, repo: s_repo.repo, permission: s_team.permission
@@ -154,11 +147,12 @@ export default async ({github, context}: ActionParams) => {
             return acc;
         }, {} as Record<string, typeof currentRulesetList[0]>);
 
-        await repoRuleSet(currentRulesets || {}, {
-            github: github, owner: s_repo.owner, repo: s_repo.repo
-        })
+        for( const s_repoRule of s_repo.repoRules) {
+            await repoRuleSet(currentRulesets || {}, s_repoRule,{
+                github: github, owner: s_repo.owner, repo: s_repo.repo
+            })
+        }
     }
-
 
 
 };
