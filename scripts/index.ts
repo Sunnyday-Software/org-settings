@@ -61,6 +61,7 @@ function enrichRuleset(org: string, p: CreateRepoRulesetParams) {
     const rtOrgInfo = runtime.orgsMap.get(org)!;
     if (p.conditions?.ref_name?.include?.includes("refs/heads/testing")) {
       if (rtOrgInfo.teams.has("maintainers")) {
+        console.log("testing branch mainstainers bypass");
         const testingTeam = rtOrgInfo.teams.get("maintainers")!;
         p.bypass_actors = [
           {
