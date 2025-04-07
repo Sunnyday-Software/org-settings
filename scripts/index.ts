@@ -78,6 +78,7 @@ function enrichRuleset(org: string, p: CreateRepoRulesetParams) {
 async function repoRuleSet(
   currentRulesetsMapByName: Record<string, any>,
   settingsCreateRepoRulesetParams: SettingsCreateRepoRulesetParams,
+  org: string,
   { github, owner, repo }: RulesetParams,
 ) {
   const payload: CreateRepoRulesetParams = {
@@ -92,11 +93,11 @@ async function repoRuleSet(
       ...payload,
       ruleset_id: currentRulesetsMapByName[payload.name].id,
     };
-    enrichRuleset(owner, updatePayload);
+    enrichRuleset(org, updatePayload);
     await github.rest.repos.updateRepoRuleset(updatePayload);
   } else {
     console.log("+ Creating ruleset...");
-    enrichRuleset(owner, payload);
+    enrichRuleset(org, payload);
     await github.rest.repos.createRepoRuleset(payload);
   }
   console.log("✅ Ruleset impostata e attivata correttamente.");
@@ -223,7 +224,7 @@ export default async ({ github, context }: ActionParams) => {
     );
 
     for (const s_repoRule of s_repo.repoRules) {
-      await repoRuleSet(currentRulesets || {}, s_repoRule, {
+      await repoRuleSet(currentRulesets || {}, s_repoRule, s_repo.org, {
         github: github,
         owner: s_repo.owner,
         repo: s_repo.repo,
