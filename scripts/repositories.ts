@@ -3,17 +3,17 @@ export type SettingsRepository = {
     owner: string
     repo: string
 };
-const ORG='Sunnyday-Software'
+const ORG = 'Sunnyday-Software'
+
+function SDSOrg(repo: string): SettingsRepository {
+    return {
+        org: ORG,
+        owner: ORG,
+        repo: repo
+    }
+}
 
 export const settingRepositories: Array<SettingsRepository> = [
-    {
-        org: ORG,
-        owner: ORG,
-        repo: 'docker-project-images'
-    },
-    {
-        org: ORG,
-        owner: ORG,
-        repo: 'docker-project-manager'
-    }
+        SDSOrg( 'docker-project-images'),
+        SDSOrg( 'docker-project-manager')
 ];
