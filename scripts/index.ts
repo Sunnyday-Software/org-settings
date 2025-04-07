@@ -88,6 +88,21 @@ async function repoRuleSet({ github, owner, repo }: RulesetParams)  {
     }
 };
 
+async function getRepoRuleSet({ github, owner, repo }: RulesetParams)  {
+    try {
+        await github.rest.repos.getRepoRulesets({
+            owner,
+            repo,
+            per_page: 100,
+            headers: {
+                "x-github-api-version": "2022-11-28",
+            },
+        });
+
+    } catch (error) {
+        console.error('⚠️ Errore:', error);
+    }
+};
 
 export default async ({github, context}: ActionParams) => {
     let repositories: Array<any> = [];
@@ -127,6 +142,12 @@ export default async ({github, context}: ActionParams) => {
             github:github, org: 'Sunnyday-Software', team_slug: 'maintainers',
             owner: 'Sunnyday-Software', repo: 'docker-project-images', permission: 'maintain'
         })
+
+        const currentRulesetList = await getRepoRuleSet({
+            github: github, owner: 'Sunnyday-Software', repo: 'docker-project-images'
+        })
+
+        console.log(currentRulesetList)
 
         await repoRuleSet({
             github:github, owner: 'Sunnyday-Software', repo: 'docker-project-images'})
