@@ -77,12 +77,14 @@ async function repoRuleSet(currentRulesetsMapByName: Record<string, any>,{ githu
             ]
         }
         if (currentRulesetsMapByName[repo]) {
+            console.log('+ Updating ruleset...');
             const updatePayload = {
                 ...payload,
                 ruleset_id: currentRulesetsMapByName[repo].id
             };
             await github.rest.repos.updateRepoRuleset(updatePayload);
         }else {
+            console.log('+ Creating ruleset...');
             await github.rest.repos.createRepoRuleset(payload);
         }
         console.log('✅ Ruleset impostata e attivata correttamente.');
