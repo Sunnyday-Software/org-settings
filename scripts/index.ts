@@ -47,11 +47,12 @@ interface RulesetParams {
     github: InstanceType<typeof GitHub>;
     owner: string;
     repo: string;
+    currentRulesetsMapByName: Record<string, any>;
 }
 
-async function repoRuleSet({ github, owner, repo }: RulesetParams)  {
+async function repoRuleSet({ github, owner, repo, currentRulesetsMapByName }: RulesetParams)  {
     try {
-        await github.rest.repos.createRepoRuleset({
+        const payload = {
             owner,
             repo,
             name: 'Block direct push to main',
@@ -80,8 +81,12 @@ async function repoRuleSet({ github, owner, repo }: RulesetParams)  {
                     type: "required_linear_history"
                 }
             ]
-        });
-
+        }
+        if (currentRulesetsMapByName[repo]) {
+            await github.rest.repos.updateRepoRuleset(currentRulesetsMapByName[repo].id, payload);
+        }else {
+            await github.rest.repos.createRepoRuleset(payload);
+        }
         console.log('✅ Ruleset impostata e attivata correttamente.');
     } catch (error) {
         console.error('⚠️ Errore:', error);
@@ -149,9 +154,14 @@ export default async ({github, context}: ActionParams) => {
             github: github, owner: 'Sunnyday-Software', repo: 'docker-project-images'
         })
 
+        const currentRulesets  = currentRulesetList?.reduce((acc, repo) => {
+            acc[repo.name] = repo;
+            return acc;
+        }, {} as Record<string, typeof currentRulesetList[0]>);
+
         console.log(currentRulesetList)
 
-        await repoRuleSet({
+        await repoRuleSet({currentRulesetsMapByName:currentRulesets,
             github:github, owner: 'Sunnyday-Software', repo: 'docker-project-images'})
     } catch (error) {
         console.error('⚠️ Errore durante la ricezione dei repository:', error);
