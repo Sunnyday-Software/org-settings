@@ -94,6 +94,7 @@ async function getRepoRuleSet({ github, owner, repo }: RulesetParams)  {
             owner,
             repo,
             per_page: 100,
+            page: 1,
             headers: {
                 "x-github-api-version": "2022-11-28",
             },
