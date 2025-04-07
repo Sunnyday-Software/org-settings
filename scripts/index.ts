@@ -83,7 +83,7 @@ async function repoRuleSet({ github, owner, repo, currentRulesetsMapByName }: Ru
             ]
         }
         if (currentRulesetsMapByName[repo]) {
-            payload["id"]=currentRulesetsMapByName[repo].id
+            payload[ruleset_id]=currentRulesetsMapByName[repo].id
             await github.rest.repos.updateRepoRuleset(payload);
         }else {
             await github.rest.repos.createRepoRuleset(payload);
